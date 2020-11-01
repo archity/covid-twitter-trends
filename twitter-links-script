@@ -1,0 +1,10 @@
+#!/bin/bash
+
+limit=1000
+keyword="covid"
+
+for i in {1..30}
+do
+    echo "Day $i"
+    snscrape --max-results $limit twitter-search "$keyword since:2020-01-$i until:2020-05-$(expr $i + 1)" >> snscrape-twitter-covid-Jan.txt
+done
