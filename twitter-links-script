@@ -3,8 +3,26 @@
 limit=1000
 keyword="covid"
 
-for i in {1..30}
+declare -A month
+month[1]="Jan"
+month+=( [2]="Feb" [3]="Mar" [4]="Apr" [5]="May" [6]="Jun" [7]="Jul" [8]="Aug" [9]="Sep" [10]="Oct" )
+
+for i in {1..10}
 do
-    echo "Day $i"
-    snscrape --max-results $limit twitter-search "$keyword since:2020-01-$i until:2020-01-$(expr $i + 1)" >> data/snscrape-twitter-covid-Jan.txt
+    echo "Month ${i} : ${month[$i]}"
+    if [ $i == 2 ]
+    then
+        for j in {1..29}
+        do
+            echo "Day $j"
+            snscrape --max-results $limit twitter-search "$keyword since:2020-$i-$j until:2020-$i-$(expr $j + 1)" >> data/snscrape-twitter-covid-$i-${month[$i]}.txt
+        done
+
+    else
+        for j in {1..30}
+        do
+            echo "Day $j"
+            snscrape --max-results $limit twitter-search "$keyword since:2020-$i-$j until:2020-$i-$(expr $j + 1)" >> data/snscrape-twitter-covid-$i-${month[$i]}.txt
+        done
+    fi
 done
