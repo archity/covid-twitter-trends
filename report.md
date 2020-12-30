@@ -1,0 +1,77 @@
+# COVID Twitter Trends
+
+## 1. Data scrapping
+
+### 1.1 snscrape
+snscrape is a command line utility which allows scrapping of tweets from twitter and return a list of URLs corresponding to the specfic tweets. The library does not have a proper Python based library and hence this part was done using CLI only.
+
+A shell script (`0-twitter-links-script`) was made in order to facilitate the use of snscrape. 
+
+```sh
+snscrape --max-results $limit twitter-search "$keyword since:2020-$i-$j until:2020-$i-$(expr $j + 1)" 
+```
+
+`keyword` corresponds to a string which needs to be present in the tweets we wish to extract. We need to lookup tweets related to the covid-19 pandemic, so we can define `keyword` as `"covid OR covid-19 OR coronavirus"` We want ot extract tweets per day, and so we use `i` and `j` variables to control the particular month and day respectively. The command will be extracting tweets between `j`th day and `j+1`th day, limited by the number `limit` (say, no more than 1000 tweets per day). These tweets will be forwarded to a `txt` file.
+
+### 1.2 tweepy
+
+<br>
+
+## 2. Exploratory Data Analysis
+
+Some remarks regarding data extraction/cleaning:
+
+* January month has the least number of tweets related to the keyword `'covid'`. Most of them are tweets where the name of the user had the word `'covid'`, and was often not even related to the pandemic.
+
+* Earlier we had only used the keyword `coronavirus` while scrapping tweets. It was later decided to include a few more keywords - `"covid OR coronavirus OR covid19 OR covid-19"` in order to cover more relevant tweets.
+
+* From the different wordclouds, there were certain words that needed to be removed. Words like `covid`, `coronavirus` would obviously be present in every post, and hence should be suppresed.
+    * Removing obvious words like `covid`, `coronavirus`, etc. proved helpful for wordclouds. It's easier to see through the different words.
+
+* Punctuations were removed from the tweets itself, so that 'coronavirus' and 'coronavirus;' are treated as same.
+    * There was a slight problem with apostrophe. Apparantly, there are 2 tyes of apostrophes, one is `'` (typewriter apostrophe) and the other is `’`, `‘`, and `´` (opening, closing & acute accent respectively). The later 3 ones are not typically found in most of the modern devices, but they were present in some of the tweets.
+
+* Single letter words like é, u, q, etc. also don't make much sense and hence should be cleansed from the tweets.
+* `coronavírus` with this specific `í` should also be removed, after looking at wordclouds and top words list for all months. Apparantly, lots of tweets contained this variant spelling of coronavirus.
+
+### Top 10 words per month
+
+|    |  January  | February |  March |   April  |    May   |  June  |  July  | August | September | October | November | December |
+|:--:|:---------:|:--------:|:------:|:--------:|:--------:|:------:|:------:|:------:|:---------:|:-------:|:--------:|:--------:|
+|  1 |   china   |   china  | people |   trump  |   casos  |  casos | people |  casos |   trump   |  trump  |  people  |          |
+|  2 |   wuhan   |   cases  |  trump |  people  |  people  | people |  trump | people |   people  |  people |   trump  |          |
+|  3 |    new    |    new   |  virus |    new   |    new   |  cases |  cases |  cases |   casos   |   get   |   cases  |          |
+|  4 |  outbreak |  people  |   us   |    us    |    19    |  trump |  casos |   one  |   cases   |  cases  |    get   |          |
+|  5 |   virus   |   virus  |   get  |    19    |   trump  |   new  |   new  |  like  |    like   |   like  |   like   |          |
+|  6 |  chinese  | outbreak |   si   |   casos  |   cases  |   19   |   get  |   get  |   deaths  |   new   |  deaths  |          |
+|  7 |   novel   |   wuhan  |  cases | pandemic |    da    |   da   |   us   |   us   |    get    |    us   |    new   |          |
+|  8 | pneumonia |    us    |   new  |   cases  |  deaths  |   não  |  like  |  trump |    new    |   one   |    us    |          |
+|  9 |   cases   |  chinese |  like  |   virus  |    us    |   get  | deaths |  know  |     us    |  would  |    one   |          |
+| 10 |    case   |   news   |   one  |  deaths  | pandemic |  like  |   one  |  2020  |    one    |  casos  |   would  |          |
+
+<br>
+
+### Wordclouds
+
+| | | |
+|:-------------------------:|:-------------------------:|:-------------------------:|
+|<img width="1024" alt="Jan. wordcloud" src="./img/wordcloud_01-Jan.png"> |  <img width="1024" alt="Feb. wordcloud" src="./img/wordcloud_02-Feb.png">|<img width="1024" alt="Mar. wordcloud" src="./img/wordcloud_03-Mar.png">|
+|<img width="1024" alt="Apr. wordcloud" src="./img/wordcloud_04-Apr.png">  |  <img width="1024" alt="May wordcloud" src="./img/wordcloud_05-May.png">|<img width="1024" alt="Jun. wordcloud" src="./img/wordcloud_06-Jun.png">|
+|<img width="1024" alt="Jul. wordcloud" src="./img/wordcloud_07-Jul.png">  |  <img width="1024" alt="Aug. wordcloud" src="./img/wordcloud_08-Aug.png">|<img width="1024" alt="Sep. wordcloud" src="./img/wordcloud_09-Sep.png">|
+|<img width="1024" alt="Oct.wordcloud" src="./img/wordcloud_10-Oct.png">  |  <img width="1024" alt="Nov. wordcloud" src="./img/wordcloud_11-Nov.png">|<img width="1024" alt="Dec. wordcloud" src="./img/wordcloud_12-Dec.png">|
+
+Remarks in-relation with pandemic:
+
+* In the initial months of January and February, the word 'china' was trending on twitter and was present in majority of tweets. This is due to the fact that the pandemic started making headlines in the month of January and February when it started spreading in China. It gradually started disappearing as the pandemic spread across the world March onwards.
+
+* The number of times the word 'trump' mentioned in the tweets (left) seem to follow the pandemic trends. It peaked around the month of April, and then once again around July, which is consistent with respect to 1st wave and 2nd wave of respectively of the covid-19 cases, as can be compared with the data from JHU (right)
+
+| <img width="360" alt="Oct.wordcloud" src="./img/trump-chart.png"> | <img width="360" alt="Oct.wordcloud" src="./img/covid-jhu-graph-annot.png"> <p style="font-size:50%;">image source: https://coronavirus.jhu.edu/map.html</p> |
+|:-:|:-:|
+
+
+
+
+<br>
+
+## Sentiment Analysis
