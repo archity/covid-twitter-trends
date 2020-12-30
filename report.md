@@ -13,7 +13,14 @@ snscrape --max-results $limit twitter-search "$keyword since:2020-$i-$j until:20
 
 `keyword` corresponds to a string which needs to be present in the tweets we wish to extract. We need to lookup tweets related to the covid-19 pandemic, so we can define `keyword` as `"covid OR covid-19 OR coronavirus"` We want ot extract tweets per day, and so we use `i` and `j` variables to control the particular month and day respectively. The command will be extracting tweets between `j`th day and `j+1`th day, limited by the number `limit` (say, no more than 1000 tweets per day). These tweets will be forwarded to a `txt` file.
 
-### 1.2 tweepy
+### 1.2 Tweepy
+
+We used the `snscrape` to obtain the URLs of the relevant tweets. Using these URLs, we can feed them to a Python library called Tweepy, through which we can extract information from the tweets URLs like the tweet itself, likes, retweets, timestamp, etc.
+
+We extracted the following metadata:
+`tweet_id`, `screen_name`, `tweet`, `date`, `likes`, `retweets`
+
+The data was then exported to a CSV file, each for a specific month.
 
 <br>
 
@@ -38,16 +45,16 @@ Some remarks regarding data extraction/cleaning:
 
 |    |  January  | February |  March |   April  |    May   |  June  |  July  | August | September | October | November | December |
 |:--:|:---------:|:--------:|:------:|:--------:|:--------:|:------:|:------:|:------:|:---------:|:-------:|:--------:|:--------:|
-|  1 |   china   |   china  | people |   trump  |   casos  |  casos | people |  casos |   trump   |  trump  |  people  |          |
-|  2 |   wuhan   |   cases  |  trump |  people  |  people  | people |  trump | people |   people  |  people |   trump  |          |
-|  3 |    new    |    new   |  virus |    new   |    new   |  cases |  cases |  cases |   casos   |   get   |   cases  |          |
-|  4 |  outbreak |  people  |   us   |    us    |    19    |  trump |  casos |   one  |   cases   |  cases  |    get   |          |
-|  5 |   virus   |   virus  |   get  |    19    |   trump  |   new  |   new  |  like  |    like   |   like  |   like   |          |
-|  6 |  chinese  | outbreak |   si   |   casos  |   cases  |   19   |   get  |   get  |   deaths  |   new   |  deaths  |          |
-|  7 |   novel   |   wuhan  |  cases | pandemic |    da    |   da   |   us   |   us   |    get    |    us   |    new   |          |
-|  8 | pneumonia |    us    |   new  |   cases  |  deaths  |   não  |  like  |  trump |    new    |   one   |    us    |          |
-|  9 |   cases   |  chinese |  like  |   virus  |    us    |   get  | deaths |  know  |     us    |  would  |    one   |          |
-| 10 |    case   |   news   |   one  |  deaths  | pandemic |  like  |   one  |  2020  |    one    |  casos  |   would  |          |
+|  1 |   china   |   china  | people |   trump  |   casos  |  casos | people |  casos |   trump   |  trump  |  people  |  people  |
+|  2 |   wuhan   |   cases  |  trump |  people  |  people  | people |  trump | people |   people  |  people |   trump  |  vaccine |
+|  3 |    new    |    new   |  virus |    new   |    new   |  cases |  cases |  cases |   casos   |   get   |   cases  |    get   |
+|  4 |  outbreak |  people  |   us   |    us    |    19    |  trump |  casos |   one  |   cases   |  cases  |    get   |   like   |
+|  5 |   virus   |   virus  |   get  |    19    |   trump  |   new  |   new  |  like  |    like   |   like  |   like   |    new   |
+|  6 |  chinese  | outbreak |   si   |   casos  |   cases  |   19   |   get  |   get  |   deaths  |   new   |  deaths  |    one   |
+|  7 |   novel   |   wuhan  |  cases | pandemic |    da    |   da   |   us   |   us   |    get    |    us   |    new   |   trump  |
+|  8 | pneumonia |    us    |   new  |   cases  |  deaths  |   não  |  like  |  trump |    new    |   one   |    us    |    us    |
+|  9 |   cases   |  chinese |  like  |   virus  |    us    |   get  | deaths |  know  |     us    |  would  |    one   |  deaths  |
+| 10 |    case   |   news   |   one  |  deaths  | pandemic |  like  |   one  |  2020  |    one    |  casos  |   would  |   cases  |
 
 <br>
 
@@ -64,9 +71,9 @@ Remarks in-relation with pandemic:
 
 * In the initial months of January and February, the word 'china' was trending on twitter and was present in majority of tweets. This is due to the fact that the pandemic started making headlines in the month of January and February when it started spreading in China. It gradually started disappearing as the pandemic spread across the world March onwards.
 
-* The number of times the word 'trump' mentioned in the tweets (left) seem to follow the pandemic trends. It peaked around the month of April, and then once again around July, which is consistent with respect to 1st wave and 2nd wave of respectively of the covid-19 cases, as can be compared with the data from JHU (right)
+* The number of times the word 'trump' mentioned in the tweets (left) seem to follow the pandemic trends. It peaked around the month of April, and then once again around July, which is consistent with respect to 1st wave and 2nd wave of respectively of the covid-19 cases, as can be compared with the data from JHU (right).
 
-| <img width="360" alt="Oct.wordcloud" src="./img/trump-chart.png"> | <img width="360" alt="Oct.wordcloud" src="./img/covid-jhu-graph-annot.png"> <p style="font-size:50%;">image source: https://coronavirus.jhu.edu/map.html</p> |
+| <img width="500" alt="Oct.wordcloud" src="./img/trump-chart.png"> | <img width="500" alt="Oct.wordcloud" src="./img/covid-jhu-graph-annot.png"> <p style="font-size:30%;">image source: https://coronavirus.jhu.edu/map.html</p> |
 |:-:|:-:|
 
 
