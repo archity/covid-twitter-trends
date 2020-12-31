@@ -16,7 +16,7 @@ month_list = ["01-Jan", "02-Feb", "03-Mar", "04-Apr", "05-May", "06-Jun", "07-Ju
 month_iterator = 1
 
 
-def run_all(month_number, x, y):
+def run_all(month_number, x, graph_dff):
     table_df = pd.read_csv('data/' + month_list[month_number - 1] + '-Tweets.csv')
     # print(table_df.head())
 
@@ -167,23 +167,35 @@ def run_all(month_number, x, y):
     # ------------------------------------------------------------------------------
     # Generate data for line graph for specific keyword
 
-    def plot_graph(x, y):
-        plt.plot(x, y, color='blue', linestyle='solid', linewidth=2,
-                 marker='o', markerfacecolor='blue', markersize=7)
+    # Function for plotting the dataframe wrt months
+    def plot_graph(x, graph_dfff):
+        my_dpi = 200
+        plt.rcParams['figure.figsize'] = 10, 5
+        for keyword_graph in graph_dfff.columns:
+            plt.figure(figsize=(1280 / my_dpi, 720 / my_dpi), dpi=my_dpi)
+            plt.plot(x, graph_dfff[keyword_graph], color='blue', linestyle='solid', linewidth=2,
+                     marker='o', markerfacecolor='blue', markersize=7)
 
-        plt.xlabel('Month')
-        plt.ylabel('Tweet mentions')
-        plt.title('Trend of word "' + keyword_graph + '" over time')
-        plt.savefig("img/plot_" + keyword_graph + ".png", format="png", dpi=200)
-        plt.show()
+            plt.xlabel('Month')
+            plt.ylabel('Tweet mentions')
+            plt.title('Trend of word "' + keyword_graph + '" over time')
+            plt.savefig("img/plot_" + keyword_graph + ".png", format="png", dpi=my_dpi)
+            plt.show()
 
-    keyword_graph = 'trump'
-    var = words_counter_df[words_counter_df['word'].str.contains(keyword_graph)]['freq']
-    # print(var.sum())
-    y.append(var.sum())
+    graph_row = list()
+    # keyword_graph = 'biden'
 
+    # Get the count of all the keywords for the current month
+    for keyword_graph in graph_dff.columns:
+        var = words_counter_df[words_counter_df['word'].str.contains(keyword_graph)]['freq']
+        graph_row.append(var.sum())
+
+    # Put the counts for current month in a pandas series and add it to the DF
+    row_series = pd.Series(graph_row, index=graph_dff.columns)
+    graph_dff = graph_dff.append(row_series, ignore_index=True)
     if month_number == 12:
-        plot_graph(x, y)
+        print(graph_dff)
+        plot_graph(x, graph_dff)
     """
     # Write plot data to file
     f = open(keyword_graph + "-stats.txt", "a+")
@@ -206,10 +218,12 @@ def run_all(month_number, x, y):
     # wc.to_file("img/wordcloud_" + month_list[month_number - 1] + ".png")
     plt.savefig("img/wordcloud_" + month_list[month_number - 1] + ".png", format="png", dpi=100)
     """
-    print(month_list[month_number-1]+" done")
+    print(month_list[month_number - 1][3:] + " done")
+    return graph_dff
 
 
 x = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-y = list()
+graph_df = pd.DataFrame(columns=['trump', 'china', 'vaccine', 'mask', 'lockdown'])
+
 for i in range(1, 12 + 1):
-    run_all(i, x, y)
+    graph_df = run_all(i, x, graph_df)
