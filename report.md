@@ -79,7 +79,7 @@ Remarks in-relation with pandemic:
 
 * The number of times the word 'trump' mentioned in the tweets (left) *appears to* follow the pandemic trends. It peaked around the month of April, and then once again around July-August, which is the time when 1st wave and 2nd wave of covid cases emerged respectively, as can be compared with the data from JHU (right).
 
-| <img width="400" alt="trump-plot" src="./img/plot_trump.png"> | <img width="500" alt="Oct.wordcloud" src="./img/covid-jhu-graph-annot.png"> <p style="font-size:30%;">image source: https://coronavirus.jhu.edu/map.html</p> |
+| <img width="400" alt="trump-plot" src="./img/plot_trump.png"> | <img width="500" alt="Oct.wordcloud" src="./img/covid-jhu-graph-annot.png"> <p style="font-size: 9px;">image source: https://coronavirus.jhu.edu/map.html</p> |
 |:-:|:-:|
 
 <br>
@@ -87,7 +87,7 @@ Remarks in-relation with pandemic:
 * Although the idea about **vaccine** was there from the beginning, it started trending very quickly in the months of November and December, when the major players like Pfizer, BioNTech, Oxford, AstraZeneca and others started receiving large orders for vaccine doses from various countries.
 
 <p align="center">
-<center><img width="400" alt="vaccine-plot" src="./img/plot_vaccine.png" align=center></center>
+<img width="400" alt="vaccine-plot" src="./img/plot_vaccine.png" align=center>
 </p>
 
 <br>
@@ -95,7 +95,7 @@ Remarks in-relation with pandemic:
 * The usage of the term **'lockdown'** peaked during 2 regions as highlighted in the picture below. The first region was the time when many countries began imposing lockdown during late February and throughout March. Most of the lockdowns lasted 1-3 months. The second highlighted region was the time when several EU countries began a 2nd lockdown in their respective nations.
 
 <p align="center">
-<center><img width="400" alt="lockdown plot" src="./img/plot_lockdown_annot.png" align=center></center>
+<img width="400" alt="lockdown plot" src="./img/plot_lockdown_annot.png" align=center>
 </p>
 
 
