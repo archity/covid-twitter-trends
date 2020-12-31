@@ -8,3 +8,5 @@ The main steps to be done are -
 - [ ] Prelimnary/Exploratory Data Analysis
 - [ ] Basic Sentiment Analysis
 - [ ] ...
+
+Report describing procedures and findings (currently being updated) can be found [here](./report.md).
