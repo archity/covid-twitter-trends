@@ -71,7 +71,9 @@ Remarks in-relation with pandemic:
 
 * In the initial months of January and February, the word 'china' was trending on twitter and was present in majority of tweets. This is due to the fact that the pandemic started making headlines in the month of January and February when it started spreading in China. This trend gradually started decreasing as the pandemic spread across the world February-March onwards.
 
-<center><img width="300" alt="china-plot" src="./img/plot_china.png" align=center></center>
+<p align="center">
+<img width="400" alt="china-plot" src="./img/plot_china.png" align=center>
+</p>
 
 <br>
 
@@ -84,15 +86,21 @@ Remarks in-relation with pandemic:
 
 * Although the idea about **vaccine** was there from the beginning, it started trending very quickly in the months of November and December, when the major players like Pfizer, BioNTech, Oxford, AstraZeneca and others started receiving large orders for vaccine doses from various countries.
 
-    <center><img width="300" alt="vaccine-plot" src="./img/plot_vaccine.png" align=center></center>
+<p align="center">
+<center><img width="400" alt="vaccine-plot" src="./img/plot_vaccine.png" align=center></center>
+</p>
 
 <br>
 
 * The usage of the term **'lockdown'** peaked during 2 regions as highlighted in the picture below. The first region was the time when many countries began imposing lockdown during late February and throughout March. Most of the lockdowns lasted 1-3 months. The second highlighted region was the time when several EU countries began a 2nd lockdown in their respective nations.
 
-    <center><img width="300" alt="lockdown plot" src="./img/plot_lockdown_annot.png" align=center></center>
+<p align="center">
+<center><img width="400" alt="lockdown plot" src="./img/plot_lockdown_annot.png" align=center></center>
+</p>
 
 
 <br>
 
 ## Sentiment Analysis
+
+(TODO)
