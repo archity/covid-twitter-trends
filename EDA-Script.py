@@ -1,3 +1,4 @@
+import pickle
 import string
 import pandas as pd
 import re
@@ -12,10 +13,12 @@ nltk.download('stopwords')
 month_list = ["01-Jan", "02-Feb", "03-Mar", "04-Apr", "05-May", "06-Jun", "07-Jul", "08-Aug", "09-Sep", "10-Oct",
               "11-Nov", "12-Dec"]
 
+month_iterator = 1
 
-def run_all(month_number):
+
+def run_all(month_number, x, y):
     table_df = pd.read_csv('data/' + month_list[month_number - 1] + '-Tweets.csv')
-    print(table_df.head())
+    # print(table_df.head())
 
     # Loop through the whole list and remove the coloumn headings,
     # since they repeat after every 100 entries
@@ -25,7 +28,7 @@ def run_all(month_number):
             # print(i)
             table_df = table_df.drop(index=i)
 
-    print(table_df.head())
+    # print(table_df.head())
 
     # ------------------------------------------------------------------------------
     df_clean = table_df
@@ -39,7 +42,7 @@ def run_all(month_number):
     df_clean['tweet'] = table_df.tweet.apply(lambda x: remove_mentions(x))
     # print(type(df_clean.tweet))
 
-    print(df_clean.head(20)["tweet"])
+    # print(df_clean.head(20)["tweet"])
     # ------------------------------------------------------------------------------
     # Convert all the letters of words to lowercase
     df_clean['tweet'] = df_clean['tweet'].str.lower()
@@ -47,7 +50,7 @@ def run_all(month_number):
     # Special replacement for 'í' (coronavírus)
     df_clean['tweet'] = df_clean['tweet'].str.replace('í', 'i')
 
-    print(df_clean['tweet'].head(20))
+    # print(df_clean['tweet'].head(20))
     # ------------------------------------------------------------------------------
 
     # Remove stopwords
@@ -56,17 +59,17 @@ def run_all(month_number):
     stopwords_french = stopwords.words('french')
     stopwords_spanish = stopwords.words('spanish')
 
-    langStopwords = stopwords_english + stopwords_french + stopwords_spanish
+    lang_stopwords = stopwords_english + stopwords_french + stopwords_spanish
 
     # print('Stop words\n')
     # print(stopwords_english)
     # print(stopwords_french)
     # print(stopwords_spanish)
 
-    langPat = r'\b(?:{})\b'.format('|'.join(langStopwords))
-    # print(langPat)
+    lang_pat = r'\b(?:{})\b'.format('|'.join(lang_stopwords))
+    # print(lang_pat)
 
-    df_clean.loc[:, 'tweet'] = df_clean.loc[:, 'tweet'].str.replace(langPat, '')
+    df_clean.loc[:, 'tweet'] = df_clean.loc[:, 'tweet'].str.replace(lang_pat, '')
     # ------------------------------------------------------------------------------
 
     # Custom single letter words
@@ -81,21 +84,21 @@ def run_all(month_number):
     # print(letter_pat)
     df_clean.loc[:, 'tweet'] = df_clean.loc[:, 'tweet'].str.replace(letter_pat, '')
 
-    print(df_clean.head(20)["tweet"])
+    # print(df_clean.head(20)["tweet"])
     # ------------------------------------------------------------------------------
 
     # Remove punctuation marks from every tweet
 
-    puncChars = '''!()-[]{};:'"\,<>./?@#$%^&*_~’‘´`~|+'''
-    # print(type(puncChars))
+    punc_chars = '''!()-[]{};:'"\,<>./?@#$%^&*_~’‘´`~|+'''
+    # print(type(punc_chars))
 
     # print(type(df_clean.loc[:, 'tweet']))
 
-    df_clean.loc[:, 'tweet'] = df_clean.loc[:, 'tweet'].str.translate(str.maketrans('', '', puncChars))
+    df_clean.loc[:, 'tweet'] = df_clean.loc[:, 'tweet'].str.translate(str.maketrans('', '', punc_chars))
     # Get the data type of each coloumn
     # print(df_clean.dtypes)
 
-    print(df_clean.head(40)["tweet"])
+    # print(df_clean.head(40)["tweet"])
     # ------------------------------------------------------------------------------
 
     # Go through each tweet and put individual word into a list
@@ -131,8 +134,8 @@ def run_all(month_number):
     # ------------------------------------------------------------------------------
 
     # Now we remove words like covid, coronavirus
-    covidWords = ["covid", "coronavirus", "covid-19", "covid19"]
-    for covword in covidWords:
+    covid_words = ["covid", "coronavirus", "covid-19", "covid19"]
+    for covword in covid_words:
         words_counter_df.drop(words_counter_df[words_counter_df.word == covword].index, inplace=True)
 
     # Remove "&amp;". It occurs several times ('&' and ';' have already been removed)
@@ -140,9 +143,9 @@ def run_all(month_number):
 
     words_counter_df = words_counter_df.reset_index(drop=True)
 
-    print('Top 20 words')
-    print(words_counter_df[:20])
-    print("Total unique words: ", words_counter_df.size)
+    # print('Top 20 words')
+    # print(words_counter_df[:20])
+    # print("Total unique words: ", words_counter_df.size)
 
     top_word_list = []
 
@@ -158,12 +161,40 @@ def run_all(month_number):
 
     # Convert pd dataframe to dictionary for input for wordcould
     wordcount_dict = dict(zip(words_counter_df.word, words_counter_df.freq))
+
     # Print first 10 items of this dict
     # print(list(wordcount_dict.items())[0:10])
+    # ------------------------------------------------------------------------------
+    # Generate data for line graph for specific keyword
+
+    def plot_graph(x, y):
+        plt.plot(x, y, color='blue', linestyle='solid', linewidth=2,
+                 marker='o', markerfacecolor='blue', markersize=7)
+
+        plt.xlabel('Month')
+        plt.ylabel('Tweet mentions')
+        plt.title('Trend of word "' + keyword_graph + '" over time')
+        plt.savefig("img/plot_" + keyword_graph + ".png", format="png", dpi=200)
+        plt.show()
+
+    keyword_graph = 'trump'
+    var = words_counter_df[words_counter_df['word'].str.contains(keyword_graph)]['freq']
+    # print(var.sum())
+    y.append(var.sum())
+
+    if month_number == 12:
+        plot_graph(x, y)
+    """
+    # Write plot data to file
+    f = open(keyword_graph + "-stats.txt", "a+")
+    f.write(str(var.sum()) + "\t")
+    f.close()
+    """
     # ------------------------------------------------------------------------------
 
     # Wordcloud
 
+    """"
     wc = WordCloud(width=2000, height=1000).generate_from_frequencies(wordcount_dict)
     fig = plt.figure(figsize=(20, 10))
     fig.suptitle(month_list[month_number - 1][3:6] + '. wordcloud', fontsize=20)
@@ -174,7 +205,11 @@ def run_all(month_number):
     # plt.show()
     # wc.to_file("img/wordcloud_" + month_list[month_number - 1] + ".png")
     plt.savefig("img/wordcloud_" + month_list[month_number - 1] + ".png", format="png", dpi=100)
+    """
+    print(month_list[month_number-1]+" done")
 
 
-for i in range(1, 11+1):
-    run_all(i)
+x = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+y = list()
+for i in range(1, 12 + 1):
+    run_all(i, x, y)
