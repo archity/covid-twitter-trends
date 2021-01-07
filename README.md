@@ -5,8 +5,8 @@ The goal is to pull data from Twitter in the form of tweets and its metadata, sp
 The main steps to be done are -
 
 - [X] Data Scrapping
-- [ ] Prelimnary/Exploratory Data Analysis
-- [ ] Basic Sentiment Analysis
+- [X] Prelimnary/Exploratory Data Analysis
+- [ ] Basic Sentiment Analysis [TODO]
 - [ ] ...
 
 Report describing procedures and findings (currently being updated) can be found [here](./report.md).
