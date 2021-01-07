@@ -16,33 +16,30 @@ month_list = ["01-Jan", "02-Feb", "03-Mar", "04-Apr", "05-May", "06-Jun", "07-Ju
 month_iterator = 1
 
 
-def run_all(month_number, x, graph_dff):
+def run_all(month_number, graph_dff):
     table_df = pd.read_csv('data/' + month_list[month_number - 1] + '-Tweets.csv')
-    # print(table_df.head())
 
     # Loop through the whole list and remove the coloumn headings,
     # since they repeat after every 100 entries
 
     for i in range(len(table_df)):
         if table_df.loc[i, "tweet"] == "tweet":
-            # print(i)
             table_df = table_df.drop(index=i)
-
-    # print(table_df.head())
 
     # ------------------------------------------------------------------------------
     df_clean = table_df
 
     # Function for removing @ mentions and hyperlinks
     def remove_mentions(text):
-        newtext = re.sub('@.*? ', '', text)
-        newtext = re.sub(r'https?:\/\/.*[\r\n]*', '', newtext)
+        # newtext = re.sub('@.*? ', '', text)
+        newtext = re.sub(r'https?:\/\/.*[\r\n]*', '', text)
         return newtext
 
     df_clean['tweet'] = table_df.tweet.apply(lambda x: remove_mentions(x))
-    # print(type(df_clean.tweet))
 
-    # print(df_clean.head(20)["tweet"])
+    # Save the dataframe for future use
+    df_clean.to_pickle("./data/pickle-data/" + month_list[month_number - 1] + "-df.pkl")
+
     # ------------------------------------------------------------------------------
     # Convert all the letters of words to lowercase
     df_clean['tweet'] = df_clean['tweet'].str.lower()
@@ -50,7 +47,6 @@ def run_all(month_number, x, graph_dff):
     # Special replacement for 'í' (coronavírus)
     df_clean['tweet'] = df_clean['tweet'].str.replace('í', 'i')
 
-    # print(df_clean['tweet'].head(20))
     # ------------------------------------------------------------------------------
 
     # Remove stopwords
@@ -61,13 +57,7 @@ def run_all(month_number, x, graph_dff):
 
     lang_stopwords = stopwords_english + stopwords_french + stopwords_spanish
 
-    # print('Stop words\n')
-    # print(stopwords_english)
-    # print(stopwords_french)
-    # print(stopwords_spanish)
-
     lang_pat = r'\b(?:{})\b'.format('|'.join(lang_stopwords))
-    # print(lang_pat)
 
     df_clean.loc[:, 'tweet'] = df_clean.loc[:, 'tweet'].str.replace(lang_pat, '')
     # ------------------------------------------------------------------------------
@@ -75,47 +65,27 @@ def run_all(month_number, x, graph_dff):
     # Custom single letter words
     custom_stop_letters = ['é', 'ê', 'è', 'î']
     cust_pat = r'\b(?:{})\b'.format('|'.join(custom_stop_letters))
-    # print(cust_pat)
     df_clean.loc[:, 'tweet'] = df_clean.loc[:, 'tweet'].str.replace(cust_pat, '')
 
     # Remove single letter words
     single_letter_words = list(string.ascii_letters)
     letter_pat = r'\b(?:{})\b'.format('|'.join(single_letter_words))
-    # print(letter_pat)
     df_clean.loc[:, 'tweet'] = df_clean.loc[:, 'tweet'].str.replace(letter_pat, '')
 
-    # print(df_clean.head(20)["tweet"])
     # ------------------------------------------------------------------------------
 
     # Remove punctuation marks from every tweet
-
     punc_chars = '''!()-[]{};:'"\,<>./?@#$%^&*_~’‘´`~|+'''
-    # print(type(punc_chars))
-
-    # print(type(df_clean.loc[:, 'tweet']))
-
     df_clean.loc[:, 'tweet'] = df_clean.loc[:, 'tweet'].str.translate(str.maketrans('', '', punc_chars))
-    # Get the data type of each coloumn
-    # print(df_clean.dtypes)
 
-    # print(df_clean.head(40)["tweet"])
     # ------------------------------------------------------------------------------
 
     # Go through each tweet and put individual word into a list
-
-    # print("Coloumn tweet type: ", type(df_clean.tweet))
 
     word_list = []
 
     for tweet in df_clean.tweet:
         word_list += (tweet.split())
-
-    # word_list[:100]
-    # print(Counter(word_list).most_common(20))
-    # print(type(word_list))
-    # print(len(word_list), "total words")
-
-    # word_list_lower = list(map(lambda x:x.lower(), word_list))
 
     # Get the count values of all the words
     words_counter = Counter(word_list).most_common()
@@ -123,14 +93,10 @@ def run_all(month_number, x, graph_dff):
     # Convert the Counter list to a Pandas dataframe
     words_counter_df = pd.DataFrame.from_records(list(dict(words_counter).items()), columns=['word', 'count'])
 
-    # print(len(word_list), "total words")
-    # print(len(Counter(word_list)), "unique words")
-
     with open('all-words.txt', 'w', encoding="utf-8") as filehandle:
         for listitem in word_list:
             filehandle.write('%s\n' % listitem)
 
-    # print(words_counter_df[:20])
     # ------------------------------------------------------------------------------
 
     # Now we remove words like covid, coronavirus
@@ -142,10 +108,6 @@ def run_all(month_number, x, graph_dff):
     words_counter_df.drop(words_counter_df[words_counter_df.word == "amp"].index, inplace=True)
 
     words_counter_df = words_counter_df.reset_index(drop=True)
-
-    # print('Top 20 words')
-    # print(words_counter_df[:20])
-    # print("Total unique words: ", words_counter_df.size)
 
     top_word_list = []
 
@@ -162,8 +124,6 @@ def run_all(month_number, x, graph_dff):
     # Convert pd dataframe to dictionary for input for wordcould
     wordcount_dict = dict(zip(words_counter_df.word, words_counter_df.freq))
 
-    # Print first 10 items of this dict
-    # print(list(wordcount_dict.items())[0:10])
     # ------------------------------------------------------------------------------
     # Generate data for line graph for specific keyword
 
@@ -183,7 +143,6 @@ def run_all(month_number, x, graph_dff):
             plt.show()
 
     graph_row = list()
-    # keyword_graph = 'biden'
 
     # Get the count of all the keywords for the current month
     for keyword_graph in graph_dff.columns:
@@ -194,6 +153,10 @@ def run_all(month_number, x, graph_dff):
     row_series = pd.Series(graph_row, index=graph_dff.columns)
     graph_dff = graph_dff.append(row_series, ignore_index=True)
     if month_number == 12:
+        # Remove number from month list, to be used as x axis
+        x = []
+        for monthName in month_list:
+            x.append(monthName[3:])
         print(graph_dff)
         plot_graph(x, graph_dff)
     """
@@ -206,24 +169,20 @@ def run_all(month_number, x, graph_dff):
 
     # Wordcloud
 
-    """"
     wc = WordCloud(width=2000, height=1000).generate_from_frequencies(wordcount_dict)
     fig = plt.figure(figsize=(20, 10))
     fig.suptitle(month_list[month_number - 1][3:6] + '. wordcloud', fontsize=20)
     plt.imshow(wc, interpolation='bilinear')
-    # plt.title(month + 'word cloud')
     plt.axis('off')
     plt.tight_layout(pad=1)
-    # plt.show()
     # wc.to_file("img/wordcloud_" + month_list[month_number - 1] + ".png")
     plt.savefig("img/wordcloud_" + month_list[month_number - 1] + ".png", format="png", dpi=100)
-    """
+    # plt.show()
     print(month_list[month_number - 1][3:] + " done")
     return graph_dff
 
 
-x = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 graph_df = pd.DataFrame(columns=['trump', 'china', 'vaccine', 'mask', 'lockdown'])
 
 for i in range(1, 12 + 1):
-    graph_df = run_all(i, x, graph_df)
+    graph_df = run_all(i, graph_df)
