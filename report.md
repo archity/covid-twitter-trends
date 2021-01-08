@@ -3,7 +3,7 @@
 ## 1. Data scrapping
 
 ### 1.1 snscrape
-snscrape is a command line utility which allows scrapping of tweets from twitter and return a list of URLs corresponding to the specfic tweets. The library does not have a proper Python based library and hence this part was done using CLI only.
+snscrape is a command line utility which allows scrapping of tweets from twitter and return a list of URLs corresponding to the specific tweets. The library does not have a proper Python based library and hence this part was done using CLI only.
 
 A shell script (`0-twitter-links-script`) was made in order to facilitate the use of snscrape. 
 
@@ -11,7 +11,7 @@ A shell script (`0-twitter-links-script`) was made in order to facilitate the us
 snscrape --max-results $limit twitter-search "$keyword since:2020-$i-$j until:2020-$i-$(expr $j + 1)" 
 ```
 
-`keyword` corresponds to a string which needs to be present in the tweets we wish to extract. We need to lookup tweets related to the covid-19 pandemic, so we can define `keyword` as `"covid OR covid-19 OR coronavirus"` We want ot extract tweets per day, and so we use `i` and `j` variables to control the particular month and day respectively. The command will be extracting tweets between `j`th day and `j+1`th day, limited by the number `limit` (say, no more than 1000 tweets per day). These tweets will be forwarded to a `txt` file.
+`keyword` corresponds to a string which needs to be present in the tweets we wish to extract. We need to lookup tweets related to the covid-19 pandemic, so we can define `keyword` as `"covid OR covid-19 OR coronavirus"` We want to extract tweets per day, and so we use `i` and `j` variables to control the particular month and day respectively. The command will be extracting tweets between `j`th day and `j+1`th day, limited by the number `limit` (say, no more than 1000 tweets per day). These tweets will be forwarded to a `txt` file.
 
 ### 1.2 Tweepy
 
@@ -32,14 +32,14 @@ Some remarks regarding data extraction/cleaning:
 
 * Earlier we had only used the keyword `coronavirus` while scrapping tweets. It was later decided to include a few more keywords - `"covid OR coronavirus OR covid19 OR covid-19"` in order to cover more relevant tweets.
 
-* From the different wordclouds, there were certain words that needed to be removed. Words like `covid`, `coronavirus` would obviously be present in every post, and hence should be suppresed.
+* From the different wordclouds, there were certain words that needed to be removed. Words like `covid`, `coronavirus` would obviously be present in every post, and hence should be suppressed.
     * Removing obvious words like `covid`, `coronavirus`, etc. proved helpful for wordclouds. It's easier to see through the different words.
 
 * Punctuations were removed from the tweets itself, so that 'coronavirus' and 'coronavirus;' are treated as same.
-    * There was a slight problem with apostrophe. Apparantly, there are 2 tyes of apostrophes, one is `'` (typewriter apostrophe) and the other is `’`, `‘`, and `´` (opening, closing & acute accent respectively). The later 3 ones are not typically found in most of the modern devices, but they were present in some of the tweets.
+    * There was a slight problem with apostrophe. Apparently, there are 2 types of apostrophes, one is `'` (typewriter apostrophe) and the other is `’`, `‘`, and `´` (opening, closing & acute accent respectively). The later 3 ones are not typically found in most of the modern devices, but they were present in some of the tweets.
 
 * Single letter words like é, u, q, etc. also don't make much sense and hence should be cleansed from the tweets.
-* `coronavírus` with this specific `í` should also be removed, after looking at wordclouds and top words list for all months. Apparantly, lots of tweets contained this variant spelling of coronavirus.
+* `coronavírus` with this specific `í` should also be removed, after looking at wordclouds and top words list for all months. Apparently, lots of tweets contained this variant spelling of coronavirus.
 
 ### Top 10 words per month
 
@@ -101,6 +101,41 @@ Remarks in-relation with pandemic:
 
 <br>
 
-## Sentiment Analysis
+## 3. Sentiment Analysis
 
-(TODO)
+### 3.1 Using TextBlob library
+
+Sentiment analysis was done using TextBlob library, wherein we got two parameters - polarity and subjectivity. Polarity tells how much positive or negative a sentence is (from +1 to -1 respectively). Subjectivity tells how much a factual or opinionated a sentence is (0 to 1 respectively).
+
+Following are the scatter plots for January and December:
+
+| <img width="400" alt="SA Jan" src="./img/sentiment/sa-01-Jan.png"> | <img width="400" alt="SA Dec" src="./img/sentiment/sa-12-Dec.png"> |
+|:-:|:-:|
+
+<br>
+
+* This data looks a difficult to interpret. Lots of tweets are clustered around central region in terms of polarity (Neutral) as well as subjectivity (Neither factual nor opinionated)
+
+A better way would be to look at changing trends of these sentiments. If we classify (0, 1] as positive, [-1, 0) as negative and 0 as neutral, we can plot a line graph from January to December for polarity:
+
+<p align="center">
+<img width="400" alt="lockdown plot" src="./img/sentiment/plot_sentiment_trend.png" align=center>
+</p>
+
+* For a given month, the sum of +ve, -ve and neutral tweets would encompass all the tweets (around 30k per month) 
+
+* We see that the number of positive as well as negative tweets overall increased from January to December. This happened at the expense of neutral tweets seeing a declining trend overall.
+
+* The number of so-called 'neutral' tweets are quite subjective, and totally based on TextBlob's interpretation. If a sentence contains both positive as well as neutral sentence, it would put it in the category of neutral (somewhat like the cancelling effect). This technique may or may not be accurate always.
+
+* Although TextBlob can detect and translate tweet, it has to be done explicitly. If a non-English tweet is given, it will put the sentiment score as 0, which *can* be one of the reasons for having so many neutral scores.
+
+* Possible TODO: Translate all the non-English tweets to English using `TextBlob.translte()` (or any other relevant library) and compare.
+
+### 3.2 Using Logistic Regression
+
+[TODO]
+
+### 3.3 Using Naïve Bayes
+
+[TODO]
