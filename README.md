@@ -6,7 +6,7 @@ The main steps to be done are -
 
 - [X] Data Scrapping
 - [X] Prelimnary/Exploratory Data Analysis
-- [ ] Basic Sentiment Analysis [TODO]
+- [X] Basic Sentiment Analysis
 - [ ] ...
 
-Report describing procedures and findings (currently being updated) can be found [here](./report.md).
+Report describing procedures and finding can be found [here](./report.md).
