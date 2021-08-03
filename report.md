@@ -119,7 +119,7 @@ Following are the scatter plots for January and December:
 A better way would be to look at changing trends of these sentiments. If we classify (0, 1] as positive, [-1, 0) as negative and 0 as neutral, we can plot a line graph from January to December for polarity:
 
 <p align="center">
-<img width="400" alt="lockdown plot" src="./img/sentiment/plot_sentiment_trend.png" align=center>
+<img width="400" alt="lockdown plot" src="./img/sentiment/plot_sentiment_trend_textblob.png" align=center>
 </p>
 
 * For a given month, the sum of +ve, -ve and neutral tweets would encompass all the tweets (around 30k per month) 
@@ -134,8 +134,29 @@ A better way would be to look at changing trends of these sentiments. If we clas
 
 ### 3.2 Using Logistic Regression
 
-[TODO]
+Some theory behind logistic regression can be found [here](./extras/THEORY.md).
 
-### 3.3 Using Naïve Bayes
+Sentiment analysis with logistic regression was done by building a model to train.
 
-[TODO]
+* Features of each tweet were extracted. Two features were extracted:
+    * The first feature is the number of positive words in a tweet.
+    * The second feature is the number of negative words in a tweet.
+* The +ve and -ve words are determined by a built frequency dictionary 
+    * `process_tweet()`: All tweets would be cleaned using NLTK's stopwords, stemmer (`PorterStemmer`) and `TweetTokenizer` (remove @ handles, lowercase words, and reduce length of word by removing repeated chars)
+    * Compute a frequency dictionary consisting of each (word, sentiment) pair and its count, with 'word' coming from cleaned tweet (process_tweet), and sentiment value from train data.
+    * Use the dictionary to compute the total number of +ve and -ve words
+
+* Gradient descent is applied in order to calculate the weights $\theta$, and the cost function $J$ is minimized.
+
+<p align="center">
+<img width="400" alt="lockdown plot" src="./img/sentiment/plot_sentiment_trend_logisticregression.png" align=center>
+</p>
+
+Remarks:
+
+* Tweets having -ve sentiment are than the tweets with +ve sentiment.
+* The first 2 months can be ignored, because there weren't enough number of tweets, and so the relative number of +ve and -ve tweets could be dubious in nature.
+* The overall +ve sentiment remains more or less same, but the -ve sentiment seems to hav increased slightly between start of the year (March) and end of the year (December).
+* 0 neutral tweets probably stems from the fact that we used a logistic sigmoid function to differentiate values above and less than 0.5
+    * In contrast to Textblob where there were lots of neutral tweets
+    * Non-English tweets were NOT filtered from both analysis. This tells us that Textblob's Pattern library and Linear regression treated and processed them differently
