@@ -149,7 +149,7 @@ Sentiment analysis with logistic regression was done by building a model to trai
 * Gradient descent is applied in order to calculate the weights $\theta$, and the cost function $J$ is minimized.
 
 <p align="center">
-<img width="400" alt="lockdown plot" src="./img/sentiment/plot_sentiment_trend_logisticregression.png" align=center>
+<img width="400" alt="lockdown plot" src="./img/sentiment/plot_sentiment_trend_LogisticRegression.png" align=center>
 </p>
 
 Remarks:
